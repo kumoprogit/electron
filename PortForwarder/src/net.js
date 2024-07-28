@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const express = require('express');
 const http = express();
 const ip = require('ip');
+const os = require('os');
+
 
 http.use(bodyParser.urlencoded({ extended: true }));
 //HTTPリクエストのボディをjsonで扱えるようになる
@@ -36,8 +38,20 @@ function server_listen() {
     });
     http.listen(LISTENPORT, '0.0.0.0', () => {
         this.init();
-        SELFIP = ip.address();
-        console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
+        //SELFIP = ip.address();
+        var ifaces = os.networkInterfaces();
+
+        Object.keys(ifaces).forEach(function (ifname) {
+          ifaces[ifname].forEach(function (iface) {
+            if ('wlan0' === ifname && "IPv4" === iface.family && iface.internal === false) {
+                SELFIP = iface.address;
+              console.log(iface.address);
+        
+//              return;
+            }
+          });
+        });
+                console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
     });
 }
 
