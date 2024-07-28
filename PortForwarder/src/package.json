@@ -12,6 +12,7 @@
     "agh.sprintf": "^0.0.11",
     "electron": "^31.3.0",
     "http-proxy": "^1.18.1",
+    "ip": "^2.0.1",
     "net.js": "*",
     "node-js": "^1.0.0",
     "sprintf-js": "^1.1.3",

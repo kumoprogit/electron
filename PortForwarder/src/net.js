@@ -43,12 +43,15 @@ function server_listen() {
 
         Object.keys(ifaces).forEach(function (ifname) {
           ifaces[ifname].forEach(function (iface) {
-            if ('wlan0' === ifname && "IPv4" === iface.family && iface.internal === false) {
-                SELFIP = iface.address;
-              console.log(iface.address);
+            if ("IPv4" === iface.family && iface.internal === false) {
+                console.log(iface);
+            }
+                if ('wlan0' === ifname && "IPv4" === iface.family && iface.internal === false) {
+                    SELFIP = iface.address;
+//              console.log(iface.address);
         
 //              return;
-            }
+                }
           });
         });
                 console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
