@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "agh.sprintf": "^0.0.11",
+    "electron": "^31.3.0",
     "http-proxy": "^1.18.1",
     "net.js": "*",
     "node-js": "^1.0.0",
