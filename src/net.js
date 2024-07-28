@@ -35,9 +35,9 @@ function server_listen() {
         }
     });
     http.listen(LISTENPORT, '0.0.0.0', () => {
+        this.init();
         SELFIP = ip.address();
         console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
-        this.init();
     });
 }
 
