@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel="stylesheet" href="./styles.css">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>PortForwarder</title>
+    <script src="./net.js"></script>
+    <script src="./tcp_proxy.js"></script>
+  </head>
+  <body>
+      <script>server_listen()</script>
+      <div class="table">
+        <table align="center" id="tbl">
+        <tr class="self">
+          <th id="self" colspan="4" >xxx.xxx.xxx.xxx</th>
+        </tr>
+        <tr class="head">
+          <th colspan="2" >Listen</th>
+          <th colspan="2" >Connect</th>
+        </tr>
+        <tr class="info">
+          <th>Address</th>
+          <th>Port</th>
+          <th>Address</th>
+          <th>Port</th>
+        </tr>
+        <tr id="pc1">
+        </tr>
+        <tr id="pc2">
+        </tr>
+        <tr id="pc3">
+        </tr>
+        <tr id="pc4">
+        </tr>
+        <tr id="pc5">
+        </tr>
+        <tr id="pc6">
+        </tr>
+        <tr id="pc7">
+        </tr>
+        <tr id="pc8">
+        </tr>
+        <tr id="pc9">
+        </tr>
+        <tr id="pc10">
+        </tr>
+      </table>
+      <br>
+      <button id="btn" onclick="update()">更新</button>
+    </div>
+  </body>
+</html>
