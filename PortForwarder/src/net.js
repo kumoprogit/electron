@@ -15,6 +15,7 @@ const LISTENPORT = 80;
 const BASEPORT = 5000;
 const IPNUM = 10;
 const listen_address = new Array(IPNUM);
+const device_address = new Array(IPNUM);
 var SELFIP = "";
 
 function server_listen() {
@@ -40,21 +41,21 @@ function server_listen() {
         this.init();
         //SELFIP = ip.address();
         var ifaces = os.networkInterfaces();
+        let i = 0;
 
         Object.keys(ifaces).forEach(function (ifname) {
-          ifaces[ifname].forEach(function (iface) {
-            if ("IPv4" === iface.family && iface.internal === false) {
-                console.log(iface);
-            }
-                if ('wlan0' === ifname && "IPv4" === iface.family && iface.internal === false) {
-                    SELFIP = iface.address;
-//              console.log(iface.address);
-        
-//              return;
+            ifaces[ifname].forEach(function (iface) {
+                if ("IPv4" === iface.family && iface.internal === false) {
+                    device_address[i] = iface.address;
+                    i = i + 1;
+                    console.log(iface);
                 }
-          });
+            });
         });
-                console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
+        if (i > 1) {
+            select_dialog();
+        }
+        console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
     });
 }
 
@@ -62,6 +63,7 @@ function server_listen() {
 function init() {
     for (let i = 0; i < 10; i++) {
         listen_address[i] = 0;
+        device_address[i] = 0;
     }
 }
 

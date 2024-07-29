@@ -6,7 +6,7 @@ const BrowserWindow = electron.BrowserWindow;
 
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
 
-let mainWindow = null;
+var mainWindow = null;
 app.once('ready', () => {
   // mainWindowを作成（windowの大きさや、Kioskモードにするかどうかなどもここで定義できる）
   mainWindow = new BrowserWindow({
@@ -21,7 +21,7 @@ app.once('ready', () => {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // ChromiumのDevツールを開く
-  //mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   mainWindow.on('closed', function() {
     mainWindow = null;
