@@ -1,3 +1,0 @@
-
-function select_dialog() {
-}
