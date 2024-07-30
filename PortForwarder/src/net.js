@@ -5,7 +5,8 @@ const express = require('express');
 const http = express();
 const ip = require('ip');
 const os = require('os');
-
+const { ipcRenderer } = require('electron');
+const remote = require('electron').remote;
 
 http.use(bodyParser.urlencoded({ extended: true }));
 //HTTPリクエストのボディをjsonで扱えるようになる
@@ -16,7 +17,7 @@ const BASEPORT = 5000;
 const IPNUM = 10;
 const listen_address = new Array(IPNUM);
 const device_address = new Array(IPNUM);
-var SELFIP = "";
+var IPNO = 0;
 
 function server_listen() {
     http.get('/regist', (req, res) => {
@@ -39,7 +40,6 @@ function server_listen() {
     });
     http.listen(LISTENPORT, '0.0.0.0', () => {
         this.init();
-        //SELFIP = ip.address();
         var ifaces = os.networkInterfaces();
         let i = 0;
 
@@ -53,9 +53,10 @@ function server_listen() {
             });
         });
         if (i > 1) {
-            select_dialog();
+            ipcRenderer.send('select', device_address);
+
         }
-        console.log('[Server]: Start. ' + SELFIP + ' listening on port '+LISTENPORT);
+        console.log('[Server]: Start. ' + device_address[IPNO] + ' listening on port '+LISTENPORT);
     });
 }
 
@@ -88,7 +89,7 @@ function add_address(ipaddr) {
 function update() {
     const tbl = document.getElementById('tbl');
     const ipa = document.getElementById('self');
-    ipa.innerHTML = SELFIP;
+    ipa.innerHTML = device_address[IPNO];
 
     if(tbl.rows.length>3) {
     for(let i=tbl.rows.length;i>3;i--){
@@ -109,3 +110,8 @@ function update() {
     cell4.innerHTML = 9515;
   }
 }
+ipcRenderer.on('select', (event,arg) => {
+    IPNO = arg;
+    update();
+    //console.log("arg=" + arg);
+});
