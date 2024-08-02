@@ -12,7 +12,7 @@ http.use(bodyParser.urlencoded({ extended: true }));
 //HTTPリクエストのボディをjsonで扱えるようになる
 http.use(bodyParser.json());
 
-const LISTENPORT = 80;
+const LISTENPORT = 3000;
 const BASEPORT = 5000;
 const IPNUM = 10;
 const listen_address = new Array(IPNUM);
@@ -65,6 +65,7 @@ function init() {
     for (let i = 0; i < 10; i++) {
         listen_address[i] = 0;
         device_address[i] = 0;
+        device_type[i] = 0;
     }
 }
 
