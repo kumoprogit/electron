@@ -42,6 +42,7 @@ ipcMain.on('select', async (event,arg) => {
   var options = {
     type: 'none',
     title: 'Select IP Address',
+    message: 'IPアドレス待ち受け選択',
     buttons: []
   };
   for (let i=0;i<arg.length;i++) {
