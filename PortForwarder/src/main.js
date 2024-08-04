@@ -42,7 +42,12 @@ ipcMain.on('select', async (event,arg) => {
   var options = {
     type: 'none',
     title: 'Select IP Address',
-    buttons: [arg[0], arg[1], arg[2]]
+    buttons: []
+  };
+  for (let i=0;i<arg.length;i++) {
+    if (arg[i] === 0 ) continue;
+    let str = String(arg[i])
+    options.buttons[i] = str;
   }
   dialog
     .showMessageBox(mainWindow,options)
