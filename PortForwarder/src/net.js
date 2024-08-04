@@ -65,7 +65,6 @@ function init() {
     for (let i = 0; i < 10; i++) {
         listen_address[i] = 0;
         device_address[i] = 0;
-        device_type[i] = 0;
     }
 }
 
@@ -90,7 +89,7 @@ function add_address(ipaddr) {
 function update() {
     const tbl = document.getElementById('tbl');
     const ipa = document.getElementById('self');
-    ipa.innerHTML = device_address[IPNO];
+    ipa.innerHTML = device_address[IPNO] + ":" + LISTENPORT;
 
     if(tbl.rows.length>3) {
     for(let i=tbl.rows.length;i>3;i--){
