@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>PortForwarder</title>
+    </head>
+    <body>
+        <div class="table">
+            <table align="center" id="tbl">
+            <tr class="self">
+              <th id="self" colspan="4" >
+                <%- data.device_addr[0] %>
+              </th>
+            </tr>
+            <tr class="head">
+              <th colspan="2" >Listen</th>
+              <th colspan="2" >Connect</th>
+            </tr>
+            <tr class="info">
+              <th>Address</th>
+              <th>Port</th>
+              <th>Address</th>
+              <th>Port</th>
+            </tr>
+            <tr id="pc1">
+                if (data.listen_address[0] !== 0) {
+                    <tr>localhost</tr>
+                    <tr><%- data.liten_port[0] + i %></tr>
+                    <tr><%- data.listen_address[0] %></th>
+                    <tr>9515</tr>
+                }
+            </tr>
+            <tr id="pc2">
+            </tr>
+            <tr id="pc3">
+            </tr>
+            <tr id="pc4">
+            </tr>
+            <tr id="pc5">
+            </tr>
+            <tr id="pc6">
+            </tr>
+            <tr id="pc7">
+            </tr>
+            <tr id="pc8">
+            </tr>
+            <tr id="pc9">
+            </tr>
+            <tr id="pc10">
+            </tr>
+          </table>
+        </div>
+    </body>
+</html>
