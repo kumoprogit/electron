@@ -8,20 +8,22 @@ const os = require('os');
 const { ipcRenderer } = require('electron');
 const remote = require('electron').remote;
 
-http.use(bodyParser.urlencoded({ extended: true }));
-//HTTPリクエストのボディをjsonで扱えるようになる
-http.use(bodyParser.json());
-
+const IPNUM = 10;
+const device_address = new Array(IPNUM);
 var data = {
     listen_port: 3000,
     base_port: 5000,
-    listen_address: [],
-    device_address: [],
-    ipno: 0
+    listen_address: "",
+    connect_address: ["", "", "", "", "", "", "", "", "", ""]
 };
 
+http.use(bodyParser.urlencoded({ extended: true }));
+//HTTPリクエストのボディをjsonで扱えるようになる
+http.use(bodyParser.json());
+//http.use('/', express.static(__dirname));
+http.use('/css', express.static('css'));
+
 function server_listen() {
-//    http.use('/', express.static(__dirname));
     http.set('view engine', 'ejs');
     http.get('/regist', (req, res) => {
         console.log("[Server]: Received from "+req.ip);
@@ -30,7 +32,7 @@ function server_listen() {
 
         if (no>=0) {
             this.update();
-            res.render('./index.ejs', data);
+            res.render('index.ejs', data);
             /*
             res.json({
                 result: true,
@@ -52,40 +54,39 @@ function server_listen() {
         Object.keys(ifaces).forEach(function (ifname) {
             ifaces[ifname].forEach(function (iface) {
                 if ("IPv4" === iface.family && iface.internal === false) {
-                    data.device_address[i] = iface.address;
+                    device_address[i] = iface.address;
                     i = i + 1;
                     console.log(iface);
                 }
             });
         });
         if (i > 1) {
-            console.log(data.device_address);
-            ipcRenderer.send('select', data.device_address);
+            console.log(device_address);
+            ipcRenderer.send('select', device_address);
 
         }
-        console.log('[Server]: Start. ' + data.device_address[data.ipno] + ' listening on port '+data.listen_port);
+        console.log('[Server]: Start. ' + data.listen_address + ' listening on port '+data.listen_port);
     });
 }
 
 
 function init() {
     for (let i = 0; i < 10; i++) {
-        data.listen_address[i] = 0;
-        data.device_address[i] = 0;
+        device_address[i] = 0;
     }
 }
 
 function add_address(ipaddr) {
     var remoteAddress;
     for (let i = 0; i < 10; i++) {
-        if (data.listen_address[i] == 0 ) continue;
-        if (ipaddr == data.listen_address[i]) {
+        if (data.connect_address[i] === "" ) continue;
+        if (ipaddr == data.connect_address[i]) {
             return -1;
         } 
     }
     for (let i = 0; i < 10; i++) {
-        if( data.listen_address[i] == 0 ) {
-            data.listen_address[i] = ipaddr;
+        if( data.connect_address[i] === "" ) {
+            data.connect_address[i] = ipaddr;
             set_portforward(data.base_port+i, ipaddr, 9515);
             //forward('localhost', String(BASEPORT+i), ipaddr, String(9515));
             return i;
@@ -96,7 +97,7 @@ function add_address(ipaddr) {
 function update() {
     const tbl = document.getElementById('tbl');
     const ipa = document.getElementById('self');
-    ipa.innerHTML = data.device_address[data.ipno] + ":" + data.listen_port;
+    ipa.innerHTML = "Server " + data.listen_address + ":" + data.listen_port;
 
     if(tbl.rows.length>3) {
     for(let i=tbl.rows.length;i>3;i--){
@@ -104,8 +105,8 @@ function update() {
       tbl.deleteRow(-1);
     }
   }
-  for(let i=0;i<data.listen_address.length;i++){
-    if ( data.listen_address[i] == 0 ) continue;
+  for(let i=0;i<IPNUM;i++){
+    if ( data.connect_address[i] === "" ) continue;
     var row = tbl.insertRow(-1);
     var cell1 = row.insertCell(-1);
     var cell2 = row.insertCell(-1);
@@ -113,12 +114,12 @@ function update() {
     var cell4 = row.insertCell(-1);
     cell1.innerHTML = '127.0.0.1';
     cell2.innerHTML = data.base_port + i;
-    cell3.innerHTML = data.listen_address[i];
+    cell3.innerHTML = data.connect_address[i];
     cell4.innerHTML = 9515;
   }
 }
 ipcRenderer.on('select', (event,arg) => {
-    data.ipno = arg;
+    data.listen_address = device_address[arg];
     update();
     //console.log("arg=" + arg);
 });

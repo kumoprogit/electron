@@ -2,6 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/styles.css">
         <title>PortForwarder</title>
     </head>
     <body>
@@ -9,7 +10,8 @@
             <table align="center" id="tbl">
             <tr class="self">
               <th id="self" colspan="4" >
-                <%- data.device_addr[0] %>
+                <% var listen = "Server " + data.listen_address + ":" + String(data.listen_port); %>
+                <%- listen %>
               </th>
             </tr>
             <tr class="head">
@@ -22,32 +24,17 @@
               <th>Address</th>
               <th>Port</th>
             </tr>
-            <tr id="pc1">
-                if (data.listen_address[0] !== 0) {
-                    <tr>localhost</tr>
-                    <tr><%- data.liten_port[0] + i %></tr>
-                    <tr><%- data.listen_address[0] %></th>
-                    <tr>9515</tr>
-                }
+            <% for (let i=0;i<10;i++ ) { %>
+            <% var ino = "PC" + String(i+1); %>
+            <tr id="<%- ino %>">
+              <% if ( data.connect_address[i] !== "" ) { %>
+              <td>localhost</td>
+              <td><%- data.base_port + i %></td>
+              <td><%- data.connect_address[i] %></td>
+              <td>9515</td>
+              <% } %>
             </tr>
-            <tr id="pc2">
-            </tr>
-            <tr id="pc3">
-            </tr>
-            <tr id="pc4">
-            </tr>
-            <tr id="pc5">
-            </tr>
-            <tr id="pc6">
-            </tr>
-            <tr id="pc7">
-            </tr>
-            <tr id="pc8">
-            </tr>
-            <tr id="pc9">
-            </tr>
-            <tr id="pc10">
-            </tr>
+            <% } %>
           </table>
         </div>
     </body>
