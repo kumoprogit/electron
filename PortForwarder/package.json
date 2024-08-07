@@ -1,7 +1,7 @@
 {
-  "name": "PortForwarder",
+  "name": "portforwarder",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "./src/main.js",
   "license": "MIT",
   "scripts": {
     "charset": "chcp 65001",
@@ -9,19 +9,17 @@
     "build": "electron-packager ./src PortForwarder --platform=win32 --overwrite"
   },
   "dependencies": {
-    "agh.sprintf": "^0.0.11",
+    "body-parser": "^1.20.2",
     "ejs": "^3.1.10",
-    "electron": "^31.3.0",
+    "ejs-electron": "^3.0.0",
+    "electron": "^31.3.1",
+    "electron-packager": "^17.1.2",
+    "express": "^4.19.2",
     "http-proxy": "^1.18.1",
-    "ip": "^2.0.1",
-    "net.js": "*",
-    "node-js": "^1.0.0",
-    "sprintf-js": "^1.1.3",
-    "sudo-js": "^1.0.2"
+    "ip": "^2.0.1"
   },
   "author": "Yoshi",
   "devDependencies": {
-    "@types/ip": "^1.1.3",
-    "electron-packager": "^17.1.2"
+    "@types/ip": "^1.1.3"
   }
 }

@@ -6,15 +6,15 @@ const http = express();
 const ip = require('ip');
 const os = require('os');
 const { ipcRenderer } = require('electron');
-const remote = require('electron').remote;
 
 const IPNUM = 10;
-const device_address = new Array(IPNUM);
 var data = {
     listen_port: 3000,
     base_port: 5000,
     listen_address: "",
-    connect_address: ["", "", "", "", "", "", "", "", "", ""]
+    connect_address: ["", "", "", "", "", "", "", "", "", ""],
+    device_address:  ["", "", "", "", "", "", "", "", "", ""],
+    status: 0
 };
 
 http.use(bodyParser.urlencoded({ extended: true }));
@@ -28,11 +28,11 @@ function server_listen() {
     http.get('/regist', (req, res) => {
         console.log("[Server]: Received from "+req.ip);
         let no = this.add_address(req.ip);
-        let listen_port = data.base_port+no;
+        let connect_port = data.base_port+no;
 
         if (no>=0) {
-            this.update();
-            res.render('index.ejs', data);
+            data.status = 0;
+            //this.update();
             /*
             res.json({
                 result: true,
@@ -41,38 +41,51 @@ function server_listen() {
             });
             */
         } else if (no == -1) {
-            res = "Existed.";
+            data.status = -1;
+            console.log("Existed.");
         } else if (no == -2) {
-            res = "Overflowed.";
+            data.status = -2;
+            console.log("Overflowed.");
         }
+        res.render('index.ejs', data);
     });
+
     http.listen(data.listen_port, '0.0.0.0', () => {
-        this.init();
+        //this.init();
         var ifaces = os.networkInterfaces();
         let i = 0;
 
         Object.keys(ifaces).forEach(function (ifname) {
             ifaces[ifname].forEach(function (iface) {
                 if ("IPv4" === iface.family && iface.internal === false) {
-                    device_address[i] = iface.address;
+                    data.device_address[i] = iface.address;
                     i = i + 1;
                     console.log(iface);
                 }
             });
         });
+/*
         if (i > 1) {
             console.log(device_address);
             ipcRenderer.send('select', device_address);
-
         }
-        console.log('[Server]: Start. ' + data.listen_address + ' listening on port '+data.listen_port);
+*/
+        //this.server_address();
+        //this.update();
+        ipcRenderer.send('show', data);
+        console.log('[Server]: Start. listening on port:'+data.listen_port);
     });
+    http.get('/list', (req, res) => {
+        console.log("[Server]: Received from "+req.ip);
+        res.render('list.ejs', data.device_address);
+    });
+
 }
 
 
 function init() {
     for (let i = 0; i < 10; i++) {
-        device_address[i] = 0;
+        data.device_address[i] = 0;
     }
 }
 
@@ -84,7 +97,7 @@ function add_address(ipaddr) {
             return -1;
         } 
     }
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < IPNUM; i++) {
         if( data.connect_address[i] === "" ) {
             data.connect_address[i] = ipaddr;
             set_portforward(data.base_port+i, ipaddr, 9515);
@@ -94,10 +107,25 @@ function add_address(ipaddr) {
     }
     return -2;
 }
+/*
+function server_address() {
+    data.server_str = "Address:";
+    for (let i = 0; i < IPNUM-1; i++) {
+        if (data.device_address[i] == "") continue;
+        data.server_str += " " + device_address[i];
+        if (data.device_address[i+1] != "") {
+            data.server_str += ",";
+        }
+    }
+    data.server_str += " Port:" + data.listen_port; 
+    return data.server_str;
+}
+*/
 function update() {
     const tbl = document.getElementById('tbl');
     const ipa = document.getElementById('self');
-    ipa.innerHTML = "Server " + data.listen_address + ":" + data.listen_port;
+    
+    ipa.innerHTML = data.device_address[0];
 
     if(tbl.rows.length>3) {
     for(let i=tbl.rows.length;i>3;i--){

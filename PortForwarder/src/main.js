@@ -3,8 +3,8 @@ const ipcMain = require('electron').ipcMain;
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const { dialog } = require('electron');
+const ejse = require('ejs-electron');
 
-global.ipno = 0;
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
 
 var mainWindow = null;
@@ -29,14 +29,13 @@ app.once('ready', () => {
     mainWindow = null;
   });
 });
-ipcMain.on('show', (_, arg) => {
-  console.log("show");
-  console.log(arg);
+
+ipcMain.on('show', async (event, arg) => {
+  ejse.data('data',arg);
+  mainWindow.loadURL('file://' + __dirname + '/../views/index.ejs');
 });
-ipcMain.on('add', (_, arg) => {
-  console.log("add");
-  console.log(arg);
-});
+
+// 選択ダイアログ
 ipcMain.on('select', async (event,arg) => {
   //console.log(arg);
   var options = {

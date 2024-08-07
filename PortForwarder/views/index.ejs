@@ -4,16 +4,36 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="../css/styles.css">
         <title>PortForwarder</title>
+        <script src="../src/net.js"></script>
+        <script src="../src/tcp_proxy.js"></script>    
     </head>
     <body>
         <div class="table">
-            <table align="center" id="tbl">
+          <table align="center" id="tbl">
             <tr class="self">
-              <th id="self" colspan="4" >
-                <% var listen = "Server " + data.listen_address + ":" + String(data.listen_port); %>
-                <%- listen %>
-              </th>
+              <th colspan="2">Server Address</th>
+              <th colspan="2">Server Port</th>
             </tr>
+            <% var num = 0; %>
+            <% for (let i=0;i<10;i++ ) { %>
+              <% if ( data.device_address[i] !== "" ) { %>
+                <% num = num + 1; %>
+              <% } %>
+            <% } %>
+            <% first = 0; %>
+            <% for (let i=0;i<10;i++ ) { %>
+              <% if ( data.device_address[i] !== "" ) { %>
+                <tr class="addr">
+                  <th colspan="2">
+                  <%- data.device_address[i] %>
+                  </th>
+                  <% if (first == 0) { %>
+                    <th colspan="2" rowspan="<%- num %>"><%- data.listen_port %></th>
+                    <% first = 1; %>
+                  <% } %>
+                </tr>
+              <% } %>
+            <% } %>
             <tr class="head">
               <th colspan="2" >Listen</th>
               <th colspan="2" >Connect</th>
@@ -35,7 +55,15 @@
               <% } %>
             </tr>
             <% } %>
-          </table>
-        </div>
-    </body>
+        </table>
+        <table align="center" id="tbl">
+          <% if ( data.status == -1 ) { %>
+          <tr>Existed.</tr>
+          <% } %>
+          <% if ( data.status == -2 ) { %>
+          <tr>Overflowed.</tr>
+          <% } %>
+        </table>
+    </div>
+  </body>
 </html>
