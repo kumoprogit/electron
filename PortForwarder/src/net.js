@@ -25,6 +25,7 @@ http.use('/css', express.static('css'));
 
 function server_listen() {
     http.set('view engine', 'ejs');
+
     http.get('/regist', (req, res) => {
         console.log("[Server]: Received from "+req.ip);
         let no = this.add_address(req.ip);
@@ -49,6 +50,10 @@ function server_listen() {
         }
         res.render('index.ejs', data);
     });
+    http.get('/list', (req, res) => {
+        console.log("[Server]: Received from "+req.ip);
+        res.render('list.ejs', data.device_address);
+    });
 
     http.listen(data.listen_port, '0.0.0.0', () => {
         //this.init();
@@ -64,6 +69,7 @@ function server_listen() {
                 }
             });
         });
+        console.log('[Server]: Start. listening on port:'+data.listen_port);
 /*
         if (i > 1) {
             console.log(device_address);
@@ -71,13 +77,8 @@ function server_listen() {
         }
 */
         //this.server_address();
-        //this.update();
-        ipcRenderer.send('show', data);
-        console.log('[Server]: Start. listening on port:'+data.listen_port);
-    });
-    http.get('/list', (req, res) => {
-        console.log("[Server]: Received from "+req.ip);
-        res.render('list.ejs', data.device_address);
+        this.update();
+        //ipcRenderer.send('show', data);
     });
 
 }
@@ -107,44 +108,54 @@ function add_address(ipaddr) {
     }
     return -2;
 }
-/*
-function server_address() {
-    data.server_str = "Address:";
-    for (let i = 0; i < IPNUM-1; i++) {
-        if (data.device_address[i] == "") continue;
-        data.server_str += " " + device_address[i];
-        if (data.device_address[i+1] != "") {
-            data.server_str += ",";
-        }
-    }
-    data.server_str += " Port:" + data.listen_port; 
-    return data.server_str;
-}
-*/
+
 function update() {
     const tbl = document.getElementById('tbl');
-    const ipa = document.getElementById('self');
+    const ipa = document.getElementsByClassName('addr');
     
-    ipa.innerHTML = data.device_address[0];
-
-    if(tbl.rows.length>3) {
-    for(let i=tbl.rows.length;i>3;i--){
-//      let last = tbl.rows.length
-      tbl.deleteRow(-1);
+    //tbl.deleteRow(1);
+    var num = 0;
+    for(let i=0;i<IPNUM;i++){
+        if (data.device_address[i] == "" ) continue;
+        num++;
     }
-  }
-  for(let i=0;i<IPNUM;i++){
-    if ( data.connect_address[i] === "" ) continue;
-    var row = tbl.insertRow(-1);
-    var cell1 = row.insertCell(-1);
-    var cell2 = row.insertCell(-1);
-    var cell3 = row.insertCell(-1);
-    var cell4 = row.insertCell(-1);
-    cell1.innerHTML = '127.0.0.1';
-    cell2.innerHTML = data.base_port + i;
-    cell3.innerHTML = data.connect_address[i];
-    cell4.innerHTML = 9515;
-  }
+    var k = 0;
+    for(let i=0;i<IPNUM;i++){
+        if (data.device_address[i] == "" ) continue;
+        var row = tbl.rows[1+k];
+        if (row.innerHTML === data.device_address[i]) continue;
+        if (row.innerHTML === "Listen") {
+            row = tbl.insertRow(1+k);
+            cell1 = row.insertCell(-1);
+        } else {
+            cell1 = row;
+        }
+        cell1.innerHTML = data.device_address[i];
+        cell1.colSpan = "2";
+        var cell2 = row.insertCell(-1);
+        cell2.colSpan = "2";
+        cell2.innerHTML = data.listen_port;
+    }
+    cell2.rowSpan = String(num);
+
+    if(tbl.rows.length>(3+num)) {
+        for(let i=tbl.rows.length;i>(3+num);i--){
+//          let last = tbl.rows.length
+        tbl.deleteRow(-1);
+        }
+    }
+    for(let i=0;i<IPNUM;i++){
+        if ( data.connect_address[i] === "" ) continue;
+        var row = tbl.rows[3+num];
+        var cell1 = row.insertCell(-1);
+        var cell2 = row.insertCell(-1);
+        var cell3 = row.insertCell(-1);
+        var cell4 = row.insertCell(-1);
+        cell1.innerHTML = '127.0.0.1';
+        cell2.innerHTML = data.base_port + i;
+        cell3.innerHTML = data.connect_address[i];
+        cell4.innerHTML = 9515;
+    }
 }
 ipcRenderer.on('select', (event,arg) => {
     data.listen_address = device_address[arg];
