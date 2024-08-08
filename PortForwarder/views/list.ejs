@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="../css/styles.css">
+        <title>PortForwarder</title>
+    </head>
+    <body>
+        <div class="table">
+            <table align="center" id="tbl">
+                <tr class="self">
+                    <th colspan="2">Server Address</th>
+                    <th colspan="2">Server Port</th>
+                  </tr>
+                  <% var num = 0; %>
+                  <% for (let i=0;i<10;i++ ) { %>
+                    <% if ( data.device_address[i] !== "" ) { %>
+                      <% num = num + 1; %>
+                    <% } %>
+                  <% } %>
+                  <% first = 0; %>
+                  <% for (let i=0;i<10;i++ ) { %>
+                    <% if ( data.device_address[i] !== "" ) { %>
+                      <tr class="addr">
+                        <th colspan="2">
+                        <%- data.device_address[i] %>
+                        </th>
+                        <% if (first == 0) { %>
+                          <th colspan="2" rowspan="<%- num %>"><%- data.listen_port %></th>
+                          <% first = 1; %>
+                        <% } %>
+                      </tr>
+                    <% } %>
+                  <% } %>
+                  <tr class="head">
+                <td>
+                <% for (let i=0;i<10;i++ ) { %>
+                    <% if ( device_address[i] !== 0 ) { %>
+                    <%-  device_address[i] %>
+                    <% } %>
+                <% } %>
+                </td>
+            </tr>
+          </table>
+        </div>
+    </body>
+</html>
