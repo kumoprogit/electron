@@ -1,11 +1,11 @@
 //import { set_portforward } from "./sudo.js"
-
-const bodyParser = require("body-parser");
+const bodyParser = require('body-parser');
 const express = require('express');
 const http = express();
 const ip = require('ip');
 const os = require('os');
 const { ipcRenderer } = require('electron');
+
 
 const IPNUM = 10;
 var data = {
@@ -23,7 +23,7 @@ http.use(bodyParser.json());
 //http.use('/', express.static(__dirname));
 http.use('/css', express.static('css'));
 
-function server_listen() {
+function server_listen(mode) {
     http.set('view engine', 'ejs');
 
     http.get('/regist', (req, res) => {
@@ -49,6 +49,7 @@ function server_listen() {
             console.log("Overflowed.");
         }
         res.render('index.ejs', data);
+        ipcRenderer.send('show', data);
     });
     http.get('/list', (req, res) => {
         console.log("[Server]: Received from "+req.ip);
@@ -77,8 +78,11 @@ function server_listen() {
         }
 */
         //this.server_address();
-        this.update();
-        //ipcRenderer.send('show', data);
+        //this.update();
+        if (mode == true) {
+            ipcRenderer.send('show', data);
+        }
+      
     });
 
 }

@@ -6,7 +6,6 @@ const { dialog } = require('electron');
 const ejse = require('ejs-electron');
 const path = require('node:path');
 
-
 process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = '1';
 //      <script src="./net.js"></script>
 
@@ -15,7 +14,7 @@ app.once('ready', (event, arg) => {
   // mainWindowを作成（windowの大きさや、Kioskモードにするかどうかなどもここで定義できる）
   mainWindow = new BrowserWindow({
     width: 640,
-    height: 480,
+    height: 360,
     webPreferences: {
       enableRemoteModule: true,
       nodeIntegration: true,
@@ -31,22 +30,20 @@ app.once('ready', (event, arg) => {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // ChromiumのDevツールを開く
-  mainWindow.webContents.openDevTools();
-  mainWindow.on('activated', ()=> {
-    console.log('activated');
-    server_listen();
-  });
+  //mainWindow.webContents.openDevTools();
   
   mainWindow.on('closed', function() {
     mainWindow = null;
   });
 
 });
-
+const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+// EJSでステータス更新
 ipcMain.on('show', async (event, arg) => {
   ejse.data('data',arg);
   mainWindow.loadURL('file://' + __dirname + '/../views/index.ejs');
 });
+
 // 選択ダイアログ
 ipcMain.on('select', async (event,arg) => {
   //console.log(arg);
