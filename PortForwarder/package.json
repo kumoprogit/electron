@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "charset": "chcp 65001",
-    "start": "electron main.js",
+    "start": "electron ./src/main.js",
     "build": "electron-packager . PortForwarder --platform=win32 --electron-version=31.3.1 --overwrite",
     "build-rasp": "electron-packager . PortForwarder --platform=linux --arch=armv7l --electron-version=31.3.1 --overwrite"
   },

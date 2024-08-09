@@ -41,7 +41,7 @@ const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 // EJSでステータス更新
 ipcMain.on('show', async (event, arg) => {
   ejse.data('data',arg);
-  mainWindow.loadURL('file://' + __dirname + '/views/index.ejs');
+  mainWindow.loadURL('file://' + __dirname + '/../views/index.ejs');
 });
 
 // 選択ダイアログ
