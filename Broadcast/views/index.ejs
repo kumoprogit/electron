@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>Broadcast</title>
+  </head>
+  <body>
+    <div class="table">
+      <table align="center" id="tbl">
+        <tr class="head">
+          <th colspan="2">Group</th>
+        </tr>
+          <tr class="self">
+            <th >Address</th>
+            <th >MacAddress</th>
+          </tr>
+          <% for (let i=0;i<data.num;i++ ) { %>
+            <% if ( data.ipaddr[i] !== "" ) { %>
+              <tr class="addr">
+                <td>
+                  <%- data.ipaddr[i] %>
+                </td>
+                <td>
+                  <%- data.macaddr[i] %>
+                </td>
+              </tr>
+            <% } %>
+          <% } %>
+      </table>
+    </div>
+  </body>
+</html>

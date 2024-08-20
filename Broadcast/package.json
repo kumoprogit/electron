@@ -1,0 +1,21 @@
+{
+  "name": "Broadcast",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "charset": "chcp 65001",
+    "start": "electron ./src/main.js",
+    "build": "electron-packager . PortForwarder --platform=win32 --electron-version=31.3.1 --overwrite",
+    "build-rasp": "electron-packager . PortForwarder --platform=linux --arch=armv7l --electron-version=31.3.1 --overwrite"
+  },
+  "devDependencies": {
+    "electron": "^31.4.0"
+  },
+  "dependencies": {
+    "ejs-electron": "^3.0.0",
+    "express": "^4.19.2",
+    "ip": "^2.0.1",
+    "os": "^0.1.2"
+  }
+}
