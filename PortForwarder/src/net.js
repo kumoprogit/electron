@@ -1,10 +1,11 @@
 //import { set_portforward } from "./sudo.js"
-const bodyParser = require('body-parser');
+//const bodyParser = require('body-parser');
 const express = require('express');
 const http = express();
 const ip = require('ip');
 const os = require('os');
 const { ipcRenderer } = require('electron');
+//const io = require('socket.io');
 
 
 const IPNUM = 10;
@@ -14,12 +15,13 @@ var data = {
     listen_address: "",
     connect_address: ["", "", "", "", "", "", "", "", "", ""],
     device_address:  ["", "", "", "", "", "", "", "", "", ""],
+    bcast_address:   ["", "", "", "", "", "", "", "", "", ""],
     status: 0
 };
 
-http.use(bodyParser.urlencoded({ extended: true }));
+//http.use(bodyParser.urlencoded({ extended: true }));
 //HTTPリクエストのボディをjsonで扱えるようになる
-http.use(bodyParser.json());
+//http.use(bodyParser.json());
 //http.use('/', express.static(__dirname));
 http.use('/css', express.static('css'));
 
@@ -65,6 +67,8 @@ function server_listen(mode) {
             ifaces[ifname].forEach(function (iface) {
                 if ("IPv4" === iface.family && iface.internal === false) {
                     data.device_address[i] = iface.address;
+                    data.bcast_address[i] = ip.or(iface.address, ip.not(iface.netmask));
+                    //iface.netmask;
                     i = i + 1;
                     console.log(iface);
                 }
@@ -89,8 +93,9 @@ function server_listen(mode) {
 
 
 function init() {
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < IPNUM; i++) {
         data.device_address[i] = 0;
+        data.bcast_address[i] = 0;
     }
 }
 
@@ -113,56 +118,20 @@ function add_address(ipaddr) {
     return -2;
 }
 
-function update() {
-    const tbl = document.getElementById('tbl');
-    const ipa = document.getElementsByClassName('addr');
-    
-    //tbl.deleteRow(1);
-    var num = 0;
-    for(let i=0;i<IPNUM;i++){
-        if (data.device_address[i] == "" ) continue;
-        num++;
-    }
-    var k = 0;
-    for(let i=0;i<IPNUM;i++){
-        if (data.device_address[i] == "" ) continue;
-        var row = tbl.rows[1+k];
-        if (row.innerHTML === data.device_address[i]) continue;
-        if (row.innerHTML === "Listen") {
-            row = tbl.insertRow(1+k);
-            cell1 = row.insertCell(-1);
-        } else {
-            cell1 = row;
-        }
-        cell1.innerHTML = data.device_address[i];
-        cell1.colSpan = "2";
-        var cell2 = row.insertCell(-1);
-        cell2.colSpan = "2";
-        cell2.innerHTML = data.listen_port;
-    }
-    cell2.rowSpan = String(num);
 
-    if(tbl.rows.length>(3+num)) {
-        for(let i=tbl.rows.length;i>(3+num);i--){
-//          let last = tbl.rows.length
-        tbl.deleteRow(-1);
-        }
-    }
-    for(let i=0;i<IPNUM;i++){
-        if ( data.connect_address[i] === "" ) continue;
-        var row = tbl.rows[3+num];
-        var cell1 = row.insertCell(-1);
-        var cell2 = row.insertCell(-1);
-        var cell3 = row.insertCell(-1);
-        var cell4 = row.insertCell(-1);
-        cell1.innerHTML = '127.0.0.1';
-        cell2.innerHTML = data.base_port + i;
-        cell3.innerHTML = data.connect_address[i];
-        cell4.innerHTML = 9515;
-    }
+function cast(n) {
+    if (n<0 & n>=IPNUM) return;
+    // Broadcast the new visitor event on ready route.
+    http.io.route('ready', function(req) {
+        req.io.broadcast('new visitor')
+    });
+
 }
+
+
 ipcRenderer.on('select', (event,arg) => {
     data.listen_address = device_address[arg];
     update();
     //console.log("arg=" + arg);
 });
+

@@ -26,7 +26,8 @@
               <% if ( data.device_address[i] !== "" ) { %>
                 <tr class="addr">
                   <th colspan="2">
-                  <%- data.device_address[i] %>
+                  <% var addr = data.device_address[i] %>
+                  <%- addr %>
                   </th>
                   <% if (first == 0) { %>
                     <th colspan="2" rowspan="<%- num %>"><%- data.listen_port %></th>

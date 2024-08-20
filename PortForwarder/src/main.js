@@ -27,7 +27,7 @@ app.once('ready', (event, arg) => {
     },
   });
   // Electronに表示するhtmlを絶対パスで指定（相対パスだと動かない）
-  mainWindow.loadURL('file://' + __dirname + '/index.html');
+  //mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // ChromiumのDevツールを開く
   mainWindow.webContents.openDevTools();
