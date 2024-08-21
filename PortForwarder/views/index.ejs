@@ -57,7 +57,10 @@
               <% } %>
             </tr>
             <% } %>
-        </table>
+            <% if ( data.status > 0 ) { %>
+              <td><input type="button" value="Manual" onclick="location.href='/Manual'"></td>
+            <% } %>
+          </table>
         <table align="center" id="tbl">
           <% if ( data.status == -1 ) { %>
           <tr>Existed.</tr>

@@ -27,7 +27,7 @@ app.once('ready', (event, arg) => {
     },
   });
   // Electronに表示するhtmlを絶対パスで指定（相対パスだと動かない）
-  //mainWindow.loadURL('file://' + __dirname + '/index.html');
+  mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // ChromiumのDevツールを開く
   mainWindow.webContents.openDevTools();
@@ -43,10 +43,14 @@ ipcMain.on('show', async (event, arg) => {
   ejse.data('data',arg);
   mainWindow.loadURL('file://' + __dirname + '/../views/index.ejs');
 });
+ipcMain.on('manual', async (event, arg) => {
+  ejse.data('data',arg);
+  mainWindow.loadURL('file://' + __dirname + '/../views/manual.ejs');
+});
 
 // 選択ダイアログ
 ipcMain.on('select', async (event,arg) => {
-  //console.log(arg);
+/*
   var options = {
     type: 'none',
     title: 'Select IP Address',
@@ -64,5 +68,15 @@ ipcMain.on('select', async (event,arg) => {
       //console.log(result.response);
       event.sender.send('select', result.response);
     });
+*/
+  var options = {
+    type: 'none',
+    title: 'chromedriverを選んで下さい',
+    message: 'IPアドレス待ち受け選択',
+    buttons: []
+  };
+  options.defaultPath = app.getPath('home');
+  dialog
+    .showOpenDialogSync(mainWindow,options)
 });
 

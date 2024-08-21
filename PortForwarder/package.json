@@ -14,13 +14,11 @@
   },
   "dependencies": {
     "body-parser": "^1.20.2",
-    "dgram": "^1.0.1",
     "ejs": "^3.1.10",
     "ejs-electron": "^3.0.0",
     "express": "^4.19.2",
     "http-proxy": "^1.18.1",
-    "ip": "^2.0.1",
-    "socket.io": "^4.7.5"
+    "ip": "^2.0.1"
   },
   "devDependencies": {
     "@types/ip": "^1.1.3",
