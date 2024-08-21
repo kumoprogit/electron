@@ -54,17 +54,22 @@ function server_listen(mode) {
         if( data.status == 1) { data.status = 0; }
         ipcRenderer.send('show', data);
     });
-/*
+    /*
     http.get('/list', (req, res) => {
         data.status = 1;
         console.log("[Server]: Received from "+req.ip);
         res.render('list.ejs', data.device_address);
     });
-*/
+    */
     http.get('/manual', (req, res) => {
         data.status = 1;
         console.log("[Server]: Received from "+req.ip);
         res.render('manual.ejs', "");
+    });
+    http.get('/select_chromedriver', (req, res) => {
+        data.status = 1;
+        console.log("[Server]: Received from "+req.ip);
+        ipcRenderer.send('select', "");
     });
 
     http.listen(data.listen_port, '0.0.0.0', () => {
@@ -128,7 +133,7 @@ function add_address(ipaddr) {
 }
 
 function select_chromedriver() {
-    Console.log('chrome');
+    Console.log('[Server]: chrome started.');
     ipcRenderer.send('select', "");
 }
 

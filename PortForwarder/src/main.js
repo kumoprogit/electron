@@ -45,7 +45,9 @@ ipcMain.on('show', async (event, arg) => {
 });
 ipcMain.on('manual', async (event, arg) => {
   ejse.data('data',arg);
-  mainWindow.loadURL('file://' + __dirname + '/../views/manual.ejs');
+  console.log("chrome");
+  Document.getElementsByClassName("btn").addEventListener("click", openDialog);
+  //mainWindow.loadURL('file://' + __dirname + '/../views/manual.ejs');
 });
 
 // 選択ダイアログ
@@ -69,10 +71,11 @@ ipcMain.on('select', async (event,arg) => {
       event.sender.send('select', result.response);
     });
 */
+  console.log("chrome started.");
   var options = {
     type: 'none',
     title: 'chromedriverを選んで下さい',
-    message: 'IPアドレス待ち受け選択',
+    message: 'ファイル選択',
     buttons: []
   };
   options.defaultPath = app.getPath('home');
