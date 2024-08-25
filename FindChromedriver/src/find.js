@@ -60,7 +60,7 @@ function ver_comp(arg){
     return true;
 }
 function ver_check(item) {
-    const stdout = execSync(item+' --version');
+    const stdout = execSync(`"${item}" --version`);
     var param = stdout.toString().split(' ');
     if (ver_comp(param[1]) == true) {
         return true;
@@ -69,7 +69,7 @@ function ver_check(item) {
 }
 
 function exec_driver(param) {
-    exec(param+' --allowed-ips', (err, stdout, stderr) => {
+    exec(`"${param}" --allowed-ips`, (err, stdout, stderr) => {
         if (err) {
           console.log(`stderr: ${stderr}`)
           return
