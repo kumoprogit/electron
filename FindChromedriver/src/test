@@ -1,0 +1,14 @@
+    let ws = path.resolve(ini.driver_path);
+
+    var flist = glob.sync(ws+"/**/chromedriver*.exe");
+    flist.forEach((item)=>{
+        if (item !== "") {
+            if (ver_check(item)){
+                buffer.push(item);
+                //window.show(data);
+                //console.log(item);
+            }
+        }
+    })
+    //window.show(data);
+    //return {buffer};

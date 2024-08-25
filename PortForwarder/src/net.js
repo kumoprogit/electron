@@ -4,26 +4,28 @@ const express = require('express');
 const http = express();
 const ip = require('ip');
 const os = require('os');
-const { ipcRenderer } = require('electron');
 //const io = require('socket.io');
+const path = require('node:path');
 
 
 const IPNUM = 10;
 var data = {
+    status: 0,
+    path: "",
     listen_port: 3000,
     base_port: 5000,
-    listen_address: "",
     connect_address: ["", "", "", "", "", "", "", "", "", ""],
     device_address:  ["", "", "", "", "", "", "", "", "", ""],
     bcast_address:   ["", "", "", "", "", "", "", "", "", ""],
-    status: 0
 };
 
 //http.use(bodyParser.urlencoded({ extended: true }));
 //HTTPリクエストのボディをjsonで扱えるようになる
 //http.use(bodyParser.json());
-//http.use('/', express.static(__dirname));
-http.use('/css', express.static('css'));
+//http.use(express.static("public"));
+//http.use('/public', express.static('/../public'));
+http.use('/', express.static(__dirname+"/../../"));
+http.use('/css', express.static("../../css"));
 
 function server_listen(mode) {
     http.set('view engine', 'ejs');
@@ -50,9 +52,11 @@ function server_listen(mode) {
             data.status = -2;
             console.log("Overflowed.");
         }
+        var s = data.status;
+        data.status = 0;
         res.render('index.ejs', data);
-        if( data.status == 1) { data.status = 0; }
-        ipcRenderer.send('show', data);
+        data.status = s;
+        window.show(data);
     });
     /*
     http.get('/list', (req, res) => {
@@ -69,9 +73,8 @@ function server_listen(mode) {
     http.get('/select_chromedriver', (req, res) => {
         data.status = 1;
         console.log("[Server]: Received from "+req.ip);
-        ipcRenderer.send('select', "");
+        window.select();
     });
-
     http.listen(data.listen_port, '0.0.0.0', () => {
         //this.init();
         var ifaces = os.networkInterfaces();
@@ -98,7 +101,9 @@ function server_listen(mode) {
         //this.server_address();
         //this.update();
         if (mode == true) {
-            ipcRenderer.send('show', data);
+            data.status = 1;
+            data.path = path.resolve();
+            window.show(data);
         }
       
     });
@@ -130,11 +135,6 @@ function add_address(ipaddr) {
         }
     }
     return -2;
-}
-
-function select_chromedriver() {
-    Console.log('[Server]: chrome started.');
-    ipcRenderer.send('select', "");
 }
 
 /*

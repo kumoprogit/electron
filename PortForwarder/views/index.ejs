@@ -1,74 +1,78 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <link rel="stylesheet" href="../css/styles.css">
-        <title>PortForwarder</title>
-        <script src="../src/net.js"></script>
-        <script src="../src/tcp_proxy.js"></script>
-    </head>
-    <body>
-      <script>server_listen(false)</script>
-        <div class="table">
-          <table align="center" id="tbl">
-            <tr class="self">
-              <th colspan="2">Server Address</th>
-              <th colspan="2">Server Port</th>
-            </tr>
-            <% var num = 0; %>
-            <% for (let i=0;i<10;i++ ) { %>
-              <% if ( data.device_address[i] !== "" ) { %>
-                <% num = num + 1; %>
-              <% } %>
-            <% } %>
-            <% first = 0; %>
-            <% for (let i=0;i<10;i++ ) { %>
-              <% if ( data.device_address[i] !== "" ) { %>
-                <tr class="addr">
-                  <th colspan="2">
-                  <% var addr = data.device_address[i] %>
-                  <%- addr %>
-                  </th>
-                  <% if (first == 0) { %>
-                    <th colspan="2" rowspan="<%- num %>"><%- data.listen_port %></th>
-                    <% first = 1; %>
-                  <% } %>
-                </tr>
-              <% } %>
-            <% } %>
-            <tr class="head">
-              <th colspan="2" >Listen</th>
-              <th colspan="2" >Connect</th>
-            </tr>
-            <tr class="info">
-              <th>Address</th>
-              <th>Port</th>
-              <th>Address</th>
-              <th>Port</th>
-            </tr>
-            <% for (let i=0;i<10;i++ ) { %>
-            <% var ino = "PC" + String(i+1); %>
-            <tr id="<%- ino %>">
-              <% if ( data.connect_address[i] !== "" ) { %>
-              <td>localhost</td>
-              <td><%- data.base_port + i %></td>
-              <td><%- data.connect_address[i] %></td>
-              <td>9515</td>
-              <% } %>
-            </tr>
-            <% } %>
-            <% if ( data.status > 0 ) { %>
-              <td><button class="btn" type="button" onclick="location.href='/Manual'">Manual</button></td>
-            <% } %>
-          </table>
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/styles.css">
+    <title>PortForwarder</title>
+    <% if ( data.status == 1 ) { %>
+      <script src="../src/net.js"></script>
+      <script src="../src/tcp_proxy.js"></script>
+    <% } %>
+  </head>
+  <body>
+    <div class="table">
+      <% if ( data.status == 1 ) { %>
+        <script>server_listen(false)</script>
+      <% } %>
         <table align="center" id="tbl">
-          <% if ( data.status == -1 ) { %>
-          <tr>Existed.</tr>
+          <tr class="self">
+            <th colspan="2">Server Address</th>
+            <th colspan="2">Server Port</th>
+          </tr>
+          <% var num = 0; %>
+          <% for (let i=0;i<10;i++ ) { %>
+            <% if ( data.device_address[i] !== "" ) { %>
+              <% num = num + 1; %>
+            <% } %>
           <% } %>
-          <% if ( data.status == -2 ) { %>
-          <tr>Overflowed.</tr>
+          <% first = 0; %>
+          <% for (let i=0;i<10;i++ ) { %>
+            <% if ( data.device_address[i] !== "" ) { %>
+              <tr class="addr">
+                <th colspan="2">
+                <% var addr = data.device_address[i] %>
+                <%- addr %>
+                </th>
+                <% if (first == 0) { %>
+                  <th colspan="2" rowspan="<%- num %>"><%- data.listen_port %></th>
+                  <% first = 1; %>
+                <% } %>
+              </tr>
+            <% } %>
+          <% } %>
+          <tr class="head">
+            <th colspan="2" >Listen</th>
+            <th colspan="2" >Connect</th>
+          </tr>
+          <tr class="info">
+            <th>Address</th>
+            <th>Port</th>
+            <th>Address</th>
+            <th>Port</th>
+          </tr>
+          <% for (let i=0;i<10;i++ ) { %>
+          <% var ino = "PC" + String(i+1); %>
+          <tr id="<%- ino %>">
+            <% if ( data.connect_address[i] !== "" ) { %>
+            <td>localhost</td>
+            <td><%- data.base_port + i %></td>
+            <td><%- data.connect_address[i] %></td>
+            <td>9515</td>
+            <% } %>
+          </tr>
           <% } %>
         </table>
+        <% if ( data.status == 0 ) { %>
+          <button class="btn" type="button" onclick="location.href='/Manual'">Manual</button>
+        <% } %>
+      <table align="center" id="tbl">
+        <% if ( data.status == -1 ) { %>
+          <tr>Existed.</tr>
+        <% } %>
+        <% if ( data.status == -2 ) { %>
+          <tr>Overflowed.</tr>
+        <% } %>
+      </table>
     </div>
   </body>
 </html>
