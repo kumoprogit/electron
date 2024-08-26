@@ -1,9 +1,12 @@
 const { ipcRenderer } = require('electron');
+
 const fs = require('fs');
 const path = require('node:path');
 const glob = require('glob');
 const { execSync } = require('child_process');
+const childprocess = require('child_process');
 const { exec } = require('child_process');
+const os = require('os');
 
 
 const workerpool = require("workerpool");
@@ -28,6 +31,9 @@ var data = {
 const START_COMM = "chromedriver 検索中";
 const END1_COMM = "chromedriver finded.";
 const END2_COMM = "chromedriver not finded.";
+
+var child_p;
+
 
 function ver_comp(arg){
     var ipa = arg.split('.');
@@ -56,11 +62,11 @@ function ver_comp(arg){
     last_ver1 = ver1;
     last_ver2 = ver2;
     last_ver3 = ver3;
- //   console.log(arg);
+//    console.log(arg);
     return true;
 }
 function ver_check(item) {
-    const stdout = execSync(item+' --version');
+    var stdout = execSync(`"${item}" --version`);
     var param = stdout.toString().split(' ');
     if (ver_comp(param[1]) == true) {
         return true;
@@ -69,16 +75,33 @@ function ver_check(item) {
 }
 
 function exec_driver(param) {
-    exec(param+' --allowed-ips', (err, stdout, stderr) => {
-        if (err) {
-          console.log(`stderr: ${stderr}`)
-          return
+    /*
+    child_p = exec(`"${param}" --allowed-ips &`, {
+        cwd: process.env.BACKEND_FOLDER_PATH
+    }, (error, stdout, stderr) => {
+        // Callback will be called when process exits..
+        if (error) {
+            console.error(`An error occurred: `, error);
+        } else {
+            console.log(`stdout:`, stdout);
+            console.log(`stderr:`, stderr);
         }
-        console.log(`stdout: ${stdout}`)
-      }
-    )    
-}
+    });
+*/    
+    child_p = childprocess.exec(`"${param}" --allowed-ips &`);
+    
 
+    ipcRenderer.on('close', async (event, arg) => {
+        kill_driver(arg);
+    })
+}
+function kill_driver(child_p) {
+    if (child_p !== 'undefined') {
+        childProcess.kill(child_p.pid);
+    }
+}
+  
+  
 function get_file(ws) {
     return glob.sync(`${ws}/**/chromedriver*.exe`);
 }
@@ -106,8 +129,16 @@ workerpool.worker({
 function find_step(){
     var textarea = document.getElementById('comm');
     textarea.value = START_COMM;
+    var ws;
     var ini = JSON.parse(fs.readFileSync(INIFILE, 'utf8'));
-    var ws = path.resolve(ini.driver_path);
+    if (ini.driver_path == "") {
+        var userpath = os.homedir();
+        ws = path.resolve(userpath);
+        ini.driver_path = userpath;
+        fs.writeFileSync(INIFILE, JSON.stringify(ini));
+    } else {
+        ws = path.resolve(ini.driver_path);
+    }
     textarea.value = textarea.value+"\r\n"+ws;
     var buffer = "";
     pool
@@ -122,7 +153,6 @@ function find_step(){
             textarea.value = textarea.value+"\r\n"+END1_COMM;
         } else {
             textarea.value = textarea.value+"\r\n"+END2_COMM;
-
         }
     })
     .catch(function(err) {
