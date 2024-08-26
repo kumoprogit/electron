@@ -11,7 +11,7 @@ const os = require('os');
 
 
 const workerpool = require("workerpool");
-const pool = workerpool.pool(__dirname + '/find.js', { workerType: 'process' });
+const pool = workerpool.pool(__dirname + '\\find.js', { workerType: 'process' });
 
 const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
@@ -64,10 +64,11 @@ function ver_comp(arg){
     last_ver1 = ver1;
     last_ver2 = ver2;
     last_ver3 = ver3;
-//    console.log(arg);
+    console.log(arg);
     return true;
 }
 function ver_check(item) {
+    var result = false;
     const stdout = execSync(`"${item}" --version`);
     var param = stdout.toString().split(' ');
     if (ver_comp(param[1]) == true) {
@@ -117,14 +118,20 @@ function kill_driver(args) {
   
   
 function get_file(ws) {
-    return glob.sync(`${ws}/**/chromedriver*.exe`);
+    try {
+        return glob.sync(`${ws}/**/chromedriver*.exe`);
+    } catch(err){
+        console.log(err);
+    }
 }
 
 function find_file(ws) {
     var flist = get_file(ws);
+    //console.log(ws);
     flist.forEach((item)=>{
         if (item != "") {
             var fname = item;
+            console.log(item);
             if (ver_check(item) == true) {
                 workerpool.workerEmit(fname);
                 //window.show(data);
@@ -144,7 +151,14 @@ function find_step(){
     var textarea = document.getElementById('comm');
     textarea.value = START_COMM;
     var ws;
-    var ini = JSON.parse(fs.readFileSync(INIFILE, 'utf8'));
+    var ini;
+    try {
+        ini = JSON.parse(fs.readFileSync(INIFILE, 'utf8'));
+    } catch(err){
+        ini = {
+            "driver_path":""
+        }
+    }
     if (ini.driver_path == "") {
         var userpath = os.homedir();
         ws = path.resolve(userpath);
