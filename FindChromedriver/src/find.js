@@ -66,7 +66,7 @@ function ver_comp(arg){
     return true;
 }
 function ver_check(item) {
-    var stdout = execSync(`"${item}" --version`);
+    const stdout = execSync(`"${item}" --version`);
     var param = stdout.toString().split(' ');
     if (ver_comp(param[1]) == true) {
         return true;
