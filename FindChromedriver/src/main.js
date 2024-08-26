@@ -45,7 +45,7 @@ app.once('ready', (event, arg) => {
   mainWindow.webContents.openDevTools();
   mainWindow.webContents.setFrameRate(60);
   mainWindow.on('close', function (event,arg) {
-    console.log(child_p);
+    mainWindow.webContents.send('close', "");
     
   });      
   mainWindow.on('closed', function(event,arg) {
@@ -59,9 +59,6 @@ const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
 
 // EJSでステータス更新
-ipcMain.handle('child', async (event, arg) => {
-  child_p = arg;
-});
 
 
 

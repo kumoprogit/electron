@@ -6,6 +6,7 @@ const glob = require('glob');
 const { execSync } = require('child_process');
 const childprocess = require('child_process');
 const { exec } = require('child_process');
+const psTree = require('ps-tree');
 const os = require('os');
 
 
@@ -33,6 +34,7 @@ const END1_COMM = "chromedriver finded.";
 const END2_COMM = "chromedriver not finded.";
 
 var child_p;
+var pids = [];
 
 
 function ver_comp(arg){
@@ -89,15 +91,27 @@ function exec_driver(param) {
     });
 */    
     child_p = childprocess.exec(`"${param}" --allowed-ips &`);
-    
-
+    console.log(child_p.pid);
+    psTree(child_p.pid, (err, children) => {
+        console.log(children)
+        children.forEach((child) => {
+            pids.push(child.PID)
+        })
+    })
+    pids.push(child_p.pid);
     ipcRenderer.on('close', async (event, arg) => {
-        kill_driver(arg);
+        kill_driver(pids);
     })
 }
-function kill_driver(child_p) {
-    if (child_p !== 'undefined') {
-        childProcess.kill(child_p.pid);
+function kill_driver(args) {
+    if (args !== "undefined") {
+        args.forEach((pid) => {
+            try {
+                process.kill(pid)
+            } catch (e) {
+              // nice catch
+            }
+        })
     }
 }
   
