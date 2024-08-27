@@ -6,18 +6,18 @@ const glob = require('glob');
 const { execSync } = require('child_process');
 const childprocess = require('child_process');
 const { exec } = require('child_process');
+const { fork } = require('child_process');
 const psTree = require('ps-tree');
 const os = require('os');
 
 
 const workerpool = require("workerpool");
-const pool = workerpool.pool(__dirname + '\\find.js', { workerType: 'process' });
+const pool = workerpool.pool(__dirname + '\\find.js', { workerType: 'process', parallel: false });
 
 const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
 var driver_path = "";
-const INIFILE = __dirname + "/../FindChromedriver.json";
-
+const INIFILE =  __dirname + "/../FindChromedriver.json";
 var last_ver0 = 0;
 var last_ver1 = 0;
 var last_ver2 = 0;
@@ -35,7 +35,10 @@ const END2_COMM = "chromedriver not finded.";
 
 var child_p;
 var pids = [];
-
+var data = {
+    path: [],
+    ver: [],
+};
 
 function ver_comp(arg){
     var ipa = arg.split('.');
@@ -68,13 +71,9 @@ function ver_comp(arg){
     return true;
 }
 function ver_check(item) {
-    var result = false;
     const stdout = execSync(`"${item}" --version`);
     var param = stdout.toString().split(' ');
-    if (ver_comp(param[1]) == true) {
-        return true;
-    }
-    return false;
+    return param[1];
 }
 
 function exec_driver(param) {
@@ -118,27 +117,34 @@ function kill_driver(args) {
   
   
 function get_file(ws) {
-    try {
-        return glob.sync(`${ws}/**/chromedriver*.exe`);
-    } catch(err){
-        console.log(err);
-    }
+    return glob.sync(`${ws}/**/chromedriver*.exe`);
 }
 
 function find_file(ws) {
+    data.path = [];
+    data.ver = [];
     var flist = get_file(ws);
-    //console.log(ws);
+//    console.log(flist);
     flist.forEach((item)=>{
+        //console.log(item);
         if (item != "") {
-            var fname = item;
-            console.log(item);
-            if (ver_check(item) == true) {
-                workerpool.workerEmit(fname);
-                //window.show(data);
+            //console.log(item);
+            let ver = ver_check(item);
+            if (ver !=="") {
+                data.path.push(item);
+                data.ver.push(ver);
             }
         }
     })
-    return;
+    let last = 0;
+    //console.log(data.path.length);
+    for( let i=0;i<data.path.length;i++){
+        if (ver_comp(String(data.ver[i]))) {
+            last = i;
+        }
+    }
+    workerpool.workerEmit(data.path[last]);
+    //window.show(data);
 }
 
 
@@ -176,17 +182,15 @@ function find_step(){
             textarea.value = textarea.value+"\r\n"+message;
         }
     })
-    .then(function (result) {
+    .catch(function(err) {
+        console.log(err);
+    })
+    .then(function() {
         if(buffer.length > 0) {
             textarea.value = textarea.value+"\r\n"+END1_COMM;
         } else {
             textarea.value = textarea.value+"\r\n"+END2_COMM;
         }
-    })
-    .catch(function(err) {
-        console.log(err);
-    })
-    .then(function() {
         pool.terminate()
         if (buffer!="") {
             console.log(buffer);
