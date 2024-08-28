@@ -7,6 +7,7 @@ const { execSync } = require('child_process');
 const childprocess = require('child_process');
 const { exec } = require('child_process');
 const { fork } = require('child_process');
+const { spawn } = require('child_process');
 const psTree = require('ps-tree');
 const os = require('os');
 
@@ -90,8 +91,17 @@ function exec_driver(param) {
         }
     });
 */    
-    child_p = childprocess.exec(`"${param}" --allowed-ips &`);
-    console.log(child_p.pid);
+    var descarea = document.getElementById('desc');
+    child_p = exec(`"${param}" --allowed-ips`);
+    child_p.stdout.on("data", (data) => {
+        descarea.textContent = data.toString();
+    })
+    child_p.stderr.on("data", (data) => {
+        descarea.textContent = data.toString();
+    })
+    child_p.on("close", (code) => {
+        resolve({result: (code === 0 ? "success" : "failed")})
+    })
     psTree(child_p.pid, (err, children) => {
         console.log(children)
         children.forEach((child) => {
@@ -103,6 +113,7 @@ function exec_driver(param) {
         kill_driver(pids);
     })
 }
+
 function kill_driver(args) {
     if (args !== "undefined") {
         args.forEach((pid) => {
@@ -154,7 +165,10 @@ workerpool.worker({
 
 
 function find_step(){
+    var button = document.getElementById('btn');
     var textarea = document.getElementById('comm');
+    button.textContent = "検索中";
+    button.disabled = "disabled";
     textarea.value = START_COMM;
     var ws;
     var ini;
@@ -195,6 +209,8 @@ function find_step(){
         if (buffer!="") {
             console.log(buffer);
             exec_driver(buffer);
+            button.textContent = "実行中";
+            button.disabled = null;
         }
     });
 }
