@@ -39,7 +39,7 @@ function set_portforward(proxyPort, targetHost, targetPort) {
         });
       
         proxySocket.on("data", function (data) {
-          console.log("send: "+data.toString()); //送信データ
+          alert("send: "+data.toString()); //送信データ
           if (connected) {
             targetSocket.write(data);
           } else {
@@ -47,7 +47,7 @@ function set_portforward(proxyPort, targetHost, targetPort) {
           }
         });
         targetSocket.on("data", function(data) {
-          console.log("rec: " + data.toString());  //受信データ
+          alert("rec: " + data.toString());  //受信データ
           proxySocket.write(data);
         });
       

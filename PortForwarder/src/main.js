@@ -30,7 +30,7 @@ app.once('ready', (event, arg) => {
   mainWindow.loadURL('file://' + __dirname + '/index.html');
 
   // ChromiumのDevツールを開く
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
   
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -41,6 +41,8 @@ const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 // EJSでステータス更新
 ipcMain.handle('show', async (event, arg) => {
   ejse.data('data',arg);
+//  console.log(__dirname);
+//  console.log(path.resolve());
   mainWindow.loadURL('file://' + __dirname + '/../views/index.ejs');
 });
 ipcMain.handle('manual', async (event, arg) => {

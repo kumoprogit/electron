@@ -31,7 +31,7 @@ function server_listen(mode) {
     http.set('view engine', 'ejs');
 
     http.get('/regist', (req, res) => {
-        console.log("[Server]: Received from "+req.ip);
+        alert("[Server]: Received from "+req.ip);
         let no = this.add_address(req.ip);
         let connect_port = data.base_port+no;
 
@@ -47,10 +47,8 @@ function server_listen(mode) {
             */
         } else if (no == -1) {
             data.status = -1;
-            console.log("Existed.");
         } else if (no == -2) {
             data.status = -2;
-            console.log("Overflowed.");
         }
         var s = data.status;
         data.status = 0;
@@ -129,6 +127,7 @@ function add_address(ipaddr) {
     for (let i = 0; i < IPNUM; i++) {
         if( data.connect_address[i] === "" ) {
             data.connect_address[i] = ipaddr;
+            console.log("local:"+(data.base_port+i)+" -> "+ipaddr+":9515");
             set_portforward(data.base_port+i, ipaddr, 9515);
             //forward('localhost', String(BASEPORT+i), ipaddr, String(9515));
             return i;

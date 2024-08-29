@@ -6,11 +6,11 @@
   "scripts": {
     "charset": "chcp 65001",
     "start": "electron ./src/main.js",
-    "build": "electron-packager . FindChromedriver --platform=win32 --electron-version=31.3.1 --overwrite",
+    "build": "electron-packager . FindChromedriver --platform=win32 --electron-version=31.1.0 --overwrite",
     "build-rasp": "electron-packager . FindChromedriver --platform=linux --arch=armv7l --electron-version=31.3.1 --overwrite"
   },
   "devDependencies": {
-    "electron": "^31.3.1"
+    "electron": "^32.0.1"
   },
   "dependencies": {
     "ejs-electron": "^3.0.0",
